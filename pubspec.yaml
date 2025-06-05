@@ -52,6 +52,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+assets:
+    - /Users/bunnyfuyu/Documents/GitHub/mobile_application_leafy/mobile_application_leafy/assets/images/mangluk.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'analysisresult.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,10 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             // White area (รายการว่าง)
-            Expanded(
-              child: Container(
-                color: Colors.white,
-              ),
+            Image.asset(
+              '/Users/bunnyfuyu/Documents/GitHub/mobile_application_leafy/mobile_application_leafy/assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
 
             // Bottom section (กล้อง + เลือกไฟล์)
@@ -86,9 +87,22 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.redAccent,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AnalysisResultPage()),
+                      );
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
