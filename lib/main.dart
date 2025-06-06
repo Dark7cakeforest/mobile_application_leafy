@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // White area (รายการว่าง)
             Image.asset(
-              '/Users/bunnyfuyu/Documents/GitHub/mobile_application_leafy/mobile_application_leafy/assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
+              'assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
               width: double.infinity,
               fit: BoxFit.cover,
             ),

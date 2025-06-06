@@ -1,0 +1,146 @@
+import 'package:flutter/material.dart';
+
+class ThankYouPage extends StatelessWidget {
+  const ThankYouPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFE9F6EA),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.black87,
+      //   title: const Text('Take Picture4'),
+      // ),
+      body: Column(
+        children: [
+          Container(
+            color: const Color(0xFFDFF5DC),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              children: const [
+                Text(
+                  'ผลการวิเคราะห์',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 39, 115, 42),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '"แมงลัก"',
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Image.asset(
+            'assets/images/mangluk.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 260,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.black12),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  'ขอบคุณสำหรับ\nความคิดเห็นของคุณ!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 39, 115, 42),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text.rich(
+                  TextSpan(
+                    text: 'โมเดลตัวนี้มีความแม่นยำเฉลี่ย ',
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromARGB(255, 39, 115, 42)),
+                    children: [
+                      TextSpan(
+                        text: '75%',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                          text: ' โดยผ่านการประมวลผล\nมาจำนวน ',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 39, 115, 42))),
+                      TextSpan(
+                        text: '20 ครั้ง',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // กลับไปหน้าเริ่มต้นถ่ายรูป
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFBBF7D0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'ถ่ายรูปอีกครั้ง',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Divider(height: 32),
+                ElevatedButton(
+                  onPressed: () {
+                    // ไปหน้ารายละเอียดเพิ่มเติม
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 12),
+                  ),
+                  child: const Text(
+                    'รายละเอียดเพิ่มเติม',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 39, 115, 42),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

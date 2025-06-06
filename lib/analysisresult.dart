@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'result.dart';
 
 class AnalysisResultPage extends StatelessWidget {
   const AnalysisResultPage({super.key});
@@ -31,7 +32,7 @@ class AnalysisResultPage extends StatelessWidget {
 
           // ภาพพืช
           Image.asset(
-            '/Users/bunnyfuyu/Documents/GitHub/mobile_application_leafy/mobile_application_leafy/assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
+            'assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
             width: double.infinity,
             fit: BoxFit.cover,
           ),
@@ -71,6 +72,31 @@ class AnalysisResultPage extends StatelessWidget {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ResultPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              ),
+              child: const Text(
+                'ตกลง',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 39, 115, 42),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
