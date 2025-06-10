@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'analysisresult.dart';
+import 'library.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,13 +47,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: Text(
-                      widget.title,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 39, 115, 42),
-                        decoration: TextDecoration.underline,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PlantLibraryPage()),
+                        );
+                      },
+                      child: const Text(
+                        'สารานุกรมพืชทั้งหมด',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 39, 115, 42),
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
