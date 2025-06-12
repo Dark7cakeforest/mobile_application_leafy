@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'analysisresult.dart';
+import 'result.dart';
 import 'library.dart';
 
 void main() {
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const AnalysisResultPage()),
+                            builder: (context) => const ResultPage()),
                       );
                     },
                     child: Container(

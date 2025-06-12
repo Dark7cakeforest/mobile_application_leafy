@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'thankyou.dart';
 import 'rating.dart';
+import 'analysisresult.dart';
 
 class ResultPage extends StatelessWidget {
   const ResultPage({super.key});
@@ -98,6 +99,11 @@ class ResultPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // ไปหน้ารายละเอียดเพิ่มเติม
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AnalysisResultPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

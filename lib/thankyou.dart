@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'analysisresult.dart';
 
 class ThankYouPage extends StatelessWidget {
   const ThankYouPage({super.key});
@@ -120,6 +121,11 @@ class ThankYouPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // ไปหน้ารายละเอียดเพิ่มเติม
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AnalysisResultPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

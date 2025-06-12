@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'rating.dart'; // <- หน้าที่คุณให้ผมสร้างไว้ก่อนหน้า
+import 'analysisresult.dart'; // <- หน้าที่คุณให้ผมสร้างไว้ก่อนหน้า
 
 class PlantLibraryPage extends StatelessWidget {
   const PlantLibraryPage({super.key});
@@ -42,7 +42,8 @@ class PlantLibraryPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const RatingPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const AnalysisResultPage()),
                   );
                 },
                 child: Column(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'result.dart';
 
 class AnalysisResultPage extends StatelessWidget {
   const AnalysisResultPage({super.key});
@@ -76,23 +75,24 @@ class AnalysisResultPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 20.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ResultPage()),
-                );
+                // TODO: เพิ่ม logic เลือกไฟล์
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
+              child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              ),
-              child: const Text(
-                'ตกลง',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color.fromARGB(255, 39, 115, 42),
-                  fontWeight: FontWeight.bold,
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Color.fromARGB(255, 11, 105, 30)),
+                ),
+                child: Center(
+                  child: Text(
+                    'ส่งข้อเสนอแนะเพิ่มเติม',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 107, 159, 108),
+                    ),
+                  ),
                 ),
               ),
             ),

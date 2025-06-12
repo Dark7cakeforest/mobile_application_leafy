@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'analysisresult.dart';
 
 class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
@@ -118,6 +119,11 @@ class _RatingPageState extends State<RatingPage> {
                 ElevatedButton(
                   onPressed: () {
                     // ไปหน้ารายละเอียดเพิ่มเติม
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AnalysisResultPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
