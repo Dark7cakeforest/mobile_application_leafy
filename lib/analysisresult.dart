@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'suggestion.dart';
 
 class AnalysisResultPage extends StatelessWidget {
   const AnalysisResultPage({super.key});
@@ -75,7 +76,12 @@ class AnalysisResultPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 20.0),
             child: ElevatedButton(
               onPressed: () {
-                // TODO: เพิ่ม logic เลือกไฟล์
+                // ไปหน้าsuggestion
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SuggestionPage()),
+                );
               },
               child: Container(
                 padding:
