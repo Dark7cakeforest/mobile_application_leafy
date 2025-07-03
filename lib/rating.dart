@@ -48,7 +48,7 @@ class _RatingPageState extends State<RatingPage> {
             ),
           ),
           Image.asset(
-            'assets/images/mangluk.jpg',
+            'assets/images/manglug.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
             height: 260,

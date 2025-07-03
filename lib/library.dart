@@ -51,7 +51,7 @@ class PlantLibraryPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      'assets/images/mangluk.jpg',
+                      'assets/images/manglug.jpg',
                       width: 200,
                       height: 200,
                       fit: BoxFit.cover,
@@ -69,7 +69,7 @@ class PlantLibraryPage extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'assets/images/chilli.jpg',
+                    'assets/images/shifa.jpg',
                     width: 200,
                     height: 200,
                     fit: BoxFit.cover,
@@ -86,7 +86,7 @@ class PlantLibraryPage extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'assets/images/basil.jpg',
+                    'assets/images/kaprao.jpg',
                     width: 200,
                     height: 200,
                     fit: BoxFit.cover,
@@ -97,6 +97,222 @@ class PlantLibraryPage extends StatelessWidget {
                           fontSize: 18,
                           color: Color.fromARGB(255, 39, 115, 42))),
                 ],
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/horapa.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('โหระพา',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล2
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/jinda.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('พริกจินดา',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล3
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/kareang.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('พริกกะเหรี่ยง',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล4
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/jinda.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('พริกจินดา',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล5
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/kheenhu.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('พริกขี้หนู',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล6
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/nhum.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('พริกหนุ่ม',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล7
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/saranae.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('สะระแหน่',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              //วนลูปแสดงข้อมูลพืชจากฐานข้อมูล8
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/yhira.jpg',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('ยี่หร่า',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 39, 115, 42))),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ],
           ),

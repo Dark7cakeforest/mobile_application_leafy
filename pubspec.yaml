@@ -56,9 +56,16 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/images/mangluk.jpg
-    - assets/images/chilli.jpg
-    - assets/images/basil.jpg
+    - assets/images/manglug.jpg
+    - assets/images/horapa.jpg
+    - assets/images/jinda.jpg
+    - assets/images/kaprao.jpg
+    - assets/images/kareang.jpg
+    - assets/images/kheenhu.jpg
+    - assets/images/nhum.jpg
+    - assets/images/saranae.jpg
+    - assets/images/shifa.jpg
+    - assets/images/yhira.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

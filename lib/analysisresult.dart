@@ -33,7 +33,7 @@ class AnalysisResultPage extends StatelessWidget {
 
           // ภาพพืช
           Image.asset(
-            'assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
+            'assets/images/manglug.jpg', // แก้ path ตามที่ใช้จริง
             width: double.infinity,
             fit: BoxFit.cover,
           ),
