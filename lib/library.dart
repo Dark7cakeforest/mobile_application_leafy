@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'analysisresult.dart'; // <- หน้าที่คุณให้ผมสร้างไว้ก่อนหน้า
 
 class PlantLibraryPage extends StatelessWidget {
-  const PlantLibraryPage({super.key});
+  final String userId;
+  const PlantLibraryPage({super.key, this.userId = 'guest'});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,8 @@ class PlantLibraryPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AnalysisResultPage()),
+                        builder: (context) =>
+                            AnalysisResultPage(userId: userId)),
                   );
                 },
                 child: Column(

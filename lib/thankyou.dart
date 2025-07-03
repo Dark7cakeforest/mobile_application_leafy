@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'analysisresult.dart';
 
 class ThankYouPage extends StatelessWidget {
-  const ThankYouPage({super.key});
+  final String userId; // ✅ เพิ่มตรงนี้
+  const ThankYouPage({super.key, this.userId = 'guest'});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +125,8 @@ class ThankYouPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AnalysisResultPage()),
+                          builder: (context) =>
+                              AnalysisResultPage(userId: userId)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

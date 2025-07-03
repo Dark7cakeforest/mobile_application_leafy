@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'analysisresult.dart';
 
 class RatingPage extends StatefulWidget {
-  const RatingPage({super.key});
+  final String userId;
+  const RatingPage({super.key, this.userId = 'guest'});
 
   @override
   State<RatingPage> createState() => _RatingPageState();
@@ -122,7 +123,9 @@ class _RatingPageState extends State<RatingPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AnalysisResultPage()),
+                        builder: (context) =>
+                            AnalysisResultPage(userId: widget.userId),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

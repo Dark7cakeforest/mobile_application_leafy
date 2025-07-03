@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'result.dart';
 import 'library.dart';
+import 'uploadpic.dart';
+import 'analysisresult.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,7 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const PlantLibraryPage()),
+                              builder: (context) =>
+                                  const PlantLibraryPage(userId: 'guest')),
                         );
                       },
                       child: const Text(
@@ -102,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ResultPage()),
+                            builder: (context) => ResultPage(userId: 'guest')),
                       );
                     },
                     child: Container(
@@ -133,8 +136,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // TODO: เพิ่ม logic เลือกไฟล์
+                      final userId = await Navigator.push<String>(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UploadPhotoPage()),
+                      );
+                      if (userId != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AnalysisResultPage(userId: userId),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(

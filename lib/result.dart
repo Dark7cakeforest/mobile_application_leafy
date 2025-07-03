@@ -4,7 +4,8 @@ import 'rating.dart';
 import 'analysisresult.dart';
 
 class ResultPage extends StatelessWidget {
-  const ResultPage({super.key});
+  final String userId;
+  const ResultPage({super.key, this.userId = 'guest'});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,8 @@ class ResultPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ThankYouPage()),
+                              builder: (context) =>
+                                  ThankYouPage(userId: userId)),
                         );
                       },
                       icon: const Icon(Icons.check_circle, color: Colors.green),
@@ -88,7 +90,7 @@ class ResultPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const RatingPage()),
+                              builder: (context) => RatingPage(userId: userId)),
                         );
                       },
                       icon: const Icon(Icons.cancel, color: Colors.red),
@@ -102,7 +104,8 @@ class ResultPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AnalysisResultPage()),
+                          builder: (context) =>
+                              AnalysisResultPage(userId: userId)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

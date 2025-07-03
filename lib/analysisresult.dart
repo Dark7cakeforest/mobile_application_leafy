@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'suggestion.dart';
 
 class AnalysisResultPage extends StatelessWidget {
-  const AnalysisResultPage({super.key});
+  final String userId;
+  const AnalysisResultPage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,9 @@ class AnalysisResultPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const SuggestionPage()),
+                      builder: (context) => SuggestionPage(
+                            userId: userId,
+                          )),
                 );
               },
               child: Container(
