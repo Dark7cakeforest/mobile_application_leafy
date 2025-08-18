@@ -59,14 +59,14 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       body: Center(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 20),//เว้น
             _image != null
                 ? Image.file(_image!, height: 200)
                 : const Text("ยังไม่เลือกรูป"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 20),//เว้น
             ElevatedButton(
                 onPressed: pickImage, child: const Text("เลือกรูปภาพ")),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10),//เว้น
             ElevatedButton(
               onPressed: _isUploading ? null : uploadImage,
               child: _isUploading

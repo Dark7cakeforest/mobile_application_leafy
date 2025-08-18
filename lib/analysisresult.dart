@@ -8,12 +8,6 @@ class AnalysisResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("After Take_pic"),
-      //   backgroundColor: const Color(0xFFE9F6EA),
-      //   foregroundColor: Colors.black,
-      //   elevation: 0,
-      // ),
       body: Column(
         children: [
           // ปุ่ม back ด้านบนพื้นหลังสีเขียวอ่อน
@@ -33,7 +27,7 @@ class AnalysisResultPage extends StatelessWidget {
 
           // ภาพพืช
           Image.asset(
-            'assets/images/mangluk.jpg', // แก้ path ตามที่ใช้จริง
+            'assets/images/manglug.jpg', // แก้ path ตามที่ใช้จริง
             width: double.infinity,
             fit: BoxFit.cover,
           ),

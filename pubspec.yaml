@@ -30,9 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  image_picker: ^1.0.4
+  image_picker: ^1.2.0
   http: ^0.13.6
   path_provider: ^2.1.1
+  camera: ^0.10.5+9
     
 
   # The following adds the Cupertino Icons font to your application.
@@ -56,9 +57,16 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/images/mangluk.jpg
-    - assets/images/chilli.jpg
-    - assets/images/basil.jpg
+    - assets/images/manglug.jpg
+    - assets/images/horapa.jpg
+    - assets/images/jinda.jpg
+    - assets/images/kaprao.jpg
+    - assets/images/kareang.jpg
+    - assets/images/kheenhu.jpg
+    - assets/images/nhum.jpg
+    - assets/images/saranae.jpg
+    - assets/images/shifa.jpg
+    - assets/images/yhira.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
