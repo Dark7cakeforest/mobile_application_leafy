@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           builder: (context) => ResultPage(
             userId: 'guest',
             // ถ้าหน้า ResultPage ยังไม่มีพารามิเตอร์ รับเพิ่มเป็น imagePath หรือ file ตามต้องการ
-            imagePath: xfile.path, // ✅ ส่งพาธรูปไปหน้า ResultPage
+            // imagePath: xfile.path, // ✅ ส่งพาธรูปไปหน้า ResultPage
           ),
         ),
       );
@@ -269,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           MaterialPageRoute(
                             builder: (context) => ResultPage(
                               userId: 'guest',
-                              imagePath: imagePath,
+                              // imagePath: imagePath,
                             ),
                           ),
                         );

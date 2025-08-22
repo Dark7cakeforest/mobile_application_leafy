@@ -1,53 +1,27 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'analysisresult.dart';
 
 class ThankYouPage extends StatelessWidget {
-  final String userId;
-
-  /// ข้อมูลจาก AI/ResultPage (ส่งมาได้จะโชว์แบบไดนามิก)
-  final String? predictedLabel; // เช่น "แมงลัก"
-  final double? confidence; // 0..1
-  final String? imagePath; // รูปที่ผู้ใช้ถ่าย/อัปโหลด
-
-  /// สถิติโมเดล (จะมาจาก backend หรือส่งมาก็ได้)
-  final double? modelAvgAccuracy; // 0..1 เช่น 0.75 => 75%
-  final int? totalInferences; // จำนวนครั้งที่ประมวลผล
-
-  const ThankYouPage({
-    super.key,
-    this.userId = 'guest',
-    this.predictedLabel,
-    this.confidence,
-    this.imagePath,
-    this.modelAvgAccuracy,
-    this.totalInferences,
-  });
+  final String userId; // ✅ เพิ่มตรงนี้
+  const ThankYouPage({super.key, this.userId = 'guest'});
 
   @override
   Widget build(BuildContext context) {
-    final label = predictedLabel ?? '—';
-    final confText = confidence != null
-        ? ' (${(confidence! * 100).toStringAsFixed(1)}%)'
-        : '';
-
-    final avgAccPct = modelAvgAccuracy != null
-        ? (modelAvgAccuracy! * 100).toStringAsFixed(0)
-        : '75'; // fallback เดิม
-    final totalInf = totalInferences?.toString() ?? '20'; // fallback เดิม
-
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.black87,
+      //   title: const Text('Take Picture4'),
+      // ),
       body: Column(
         children: [
-          // Header
           Container(
             color: const Color(0xFFDFF5DC),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
-              children: [
-                const Text(
+              children: const [
+                Text(
                   'ผลการวิเคราะห์',
                   style: TextStyle(
                     color: Color.fromARGB(255, 39, 115, 42),
@@ -56,8 +30,8 @@ class ThankYouPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '"$label"$confText',
-                  style: const TextStyle(
+                  '"แมงลัก"',
+                  style: TextStyle(
                     fontSize: 22,
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -66,13 +40,13 @@ class ThankYouPage extends StatelessWidget {
               ],
             ),
           ),
-
-          // รูปภาพ (ถ้ามี imagePath ใช้รูปจริงก่อน)
-          _buildImage(imagePath),
-
+          Image.asset(
+            'assets/images/manglug.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 260,
+          ),
           const SizedBox(height: 16),
-
-          // การ์ดข้อความ + ปุ่ม
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
@@ -93,47 +67,38 @@ class ThankYouPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // สถิติโมเดล (ไดนามิก/มี fallback)
-                Text.rich(
+                const Text.rich(
                   TextSpan(
                     text: 'โมเดลตัวนี้มีความแม่นยำเฉลี่ย ',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color.fromARGB(255, 39, 115, 42),
-                    ),
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromARGB(255, 39, 115, 42)),
                     children: [
                       TextSpan(
-                        text: '$avgAccPct%',
-                        style: const TextStyle(
+                        text: '75%',
+                        style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ' โดยผ่านการประมวลผล\nมาจำนวน ',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 39, 115, 42),
                         ),
                       ),
                       TextSpan(
-                        text: totalInf,
-                        style: const TextStyle(
+                          text: ' โดยผ่านการประมวลผล\nมาจำนวน ',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 39, 115, 42))),
+                      TextSpan(
+                        text: '20 ครั้ง',
+                        style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const TextSpan(text: ' ครั้ง'),
                     ],
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 20),
-
-                // กลับไปเริ่มต้น
                 ElevatedButton(
                   onPressed: () {
+                    // กลับไปหน้าเริ่มต้นถ่ายรูป
                     Navigator.popUntil(context, (route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(
@@ -153,22 +118,15 @@ class ThankYouPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const Divider(height: 32),
-
-                // ไปหน้ารายละเอียดเพิ่มเติม (ส่งข้อมูลต่อให้ครบ)
                 ElevatedButton(
                   onPressed: () {
+                    // ไปหน้ารายละเอียดเพิ่มเติม
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AnalysisResultPage(
-                          userId: userId,
-                          imagePath: imagePath,
-                          predictedLabel: predictedLabel,
-                          confidence: confidence,
-                        ),
-                      ),
+                          builder: (context) =>
+                              AnalysisResultPage(userId: userId)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -191,29 +149,6 @@ class ThankYouPage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildImage(String? imagePath) {
-    if (imagePath != null && imagePath.isNotEmpty) {
-      final f = File(imagePath);
-      return Image.file(
-        f,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: 260,
-        errorBuilder: (_, __, ___) => _fallbackImage(),
-      );
-    }
-    return _fallbackImage();
-  }
-
-  Widget _fallbackImage() {
-    return Image.asset(
-      'assets/images/manglug.jpg',
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: 260,
     );
   }
 }

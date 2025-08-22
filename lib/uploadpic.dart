@@ -29,7 +29,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     setState(() => _isUploading = true);
 
     var uri =
-        Uri.parse("http://192.168.20.190:5001/upload"); // หรือ IP บนมือถือคุณ
+        Uri.parse("http://172.23.227.237:5001/upload"); // หรือ IP บนมือถือคุณ
     var request = http.MultipartRequest('POST', uri);
     request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
 
