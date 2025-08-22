@@ -29,7 +29,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     setState(() => _isUploading = true);
 
     var uri =
-        Uri.parse("http://192.168.1.187:5001/upload"); // หรือ IP บนมือถือคุณ
+        Uri.parse("http://192.168.20.190:5001/upload"); // หรือ IP บนมือถือคุณ
     var request = http.MultipartRequest('POST', uri);
     request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
 
@@ -59,14 +59,14 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       body: Center(
         child: Column(
           children: [
-            const SizedBox(height: 20),//เว้น
+            const SizedBox(height: 20), //เว้น
             _image != null
                 ? Image.file(_image!, height: 200)
                 : const Text("ยังไม่เลือกรูป"),
-            const SizedBox(height: 20),//เว้น
+            const SizedBox(height: 20), //เว้น
             ElevatedButton(
                 onPressed: pickImage, child: const Text("เลือกรูปภาพ")),
-            const SizedBox(height: 10),//เว้น
+            const SizedBox(height: 10), //เว้น
             ElevatedButton(
               onPressed: _isUploading ? null : uploadImage,
               child: _isUploading

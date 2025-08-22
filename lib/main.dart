@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'result.dart';
 import 'library.dart';
 import 'uploadpic.dart';
-import 'analysisresult.dart';
 import 'package:camera/camera.dart';
 
 List<CameraDescription> _cameras = [];
@@ -12,6 +11,7 @@ Future<void> main() async {
   _cameras = await availableCameras();
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -37,7 +37,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   File? file;
   CameraController? _controller;
   Future<void>? _initCamFuture;
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
           builder: (context) => ResultPage(
             userId: 'guest',
             // ถ้าหน้า ResultPage ยังไม่มีพารามิเตอร์ รับเพิ่มเป็น imagePath หรือ file ตามต้องการ
-            // imagePath: xfile.path,
+            imagePath: xfile.path, // ✅ ส่งพาธรูปไปหน้า ResultPage
           ),
         ),
       );
@@ -123,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
     }
   }
 
-  @override//ส่วนต่าง ๆ เรียงจากบนลงล่าง
+  @override //ส่วนต่าง ๆ เรียงจากบนลงล่าง
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
@@ -204,8 +204,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
             // ปุ่มถ่าย/อัพโหลดไฟล์
             Container(
               color: const Color(0xFFE9F6EA),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: Column(
                 children: [
                   GestureDetector(
@@ -242,8 +241,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                       padding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 50),
                       backgroundColor: Colors.white,
-                      foregroundColor:
-                          const Color.fromARGB(255, 107, 159, 108),
+                      foregroundColor: const Color.fromARGB(255, 107, 159, 108),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: const BorderSide(
@@ -258,19 +256,21 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                       ),
                     ),
                     onPressed: () async {
-                      final userId = await Navigator.push<String>(
+                      final imagePath = await Navigator.push<String>(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const UploadPhotoPage(),
                         ),
                       );
                       if (!mounted) return;
-                      if (userId != null) {
+                      if (imagePath != null) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                AnalysisResultPage(userId: userId),
+                            builder: (context) => ResultPage(
+                              userId: 'guest',
+                              imagePath: imagePath,
+                            ),
                           ),
                         );
                       }
