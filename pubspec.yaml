@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.2.0
-  http: ^0.13.6
+  http: ^1.2.1
   path_provider: ^2.1.1
   camera: ^0.10.5+9
     

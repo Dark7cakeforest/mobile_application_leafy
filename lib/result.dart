@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'thankyou.dart';
-import 'rating.dart';
 import 'analysisresult.dart';
 
 class ResultPage extends StatelessWidget {

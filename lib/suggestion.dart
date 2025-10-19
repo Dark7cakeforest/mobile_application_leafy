@@ -18,7 +18,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
     if (suggestion.isEmpty) return;
 
     final url = Uri.parse(
-        'http://192.168.1.187:5001/submit_suggestion'); // 🔁 เปลี่ยนเป็น IP เครื่องคุณถ้าใช้มือถือจริง
+        'http://127.0.0.1:5001/submit_suggestion'); // 🔁 เปลี่ยนเป็น IP เครื่องคุณถ้าใช้มือถือจริง
     try {
       final response = await http.post(
         url,
