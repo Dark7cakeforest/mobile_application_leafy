@@ -47,3 +47,11 @@
 	<true/>
 </dict>
 </plist>
+<key>NSCameraUsageDescription</key>
+<string>Need camera for plant prediction</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Pick photo for prediction</string>
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key><true/>
+</dict>

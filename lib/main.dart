@@ -107,14 +107,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       final photo = File(xfile.path);
       setState(() => file = photo);
 
-      // (แนะนำ) ส่งรูปไปหน้า ResultPage ด้วย
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ResultPage(
             userId: 'guest',
-            // ถ้าหน้า ResultPage ยังไม่มีพารามิเตอร์ รับเพิ่มเป็น imagePath หรือ file ตามต้องการ
-            // imagePath: xfile.path, // ✅ ส่งพาธรูปไปหน้า ResultPage
+            imagePath: xfile.path, // ส่งพาธรูปไปหน้า ResultPage
           ),
         ),
       );
@@ -125,161 +123,179 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override //ส่วนต่าง ๆ เรียงจากบนลงล่าง
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // ตั้งให้ preview เป็นช่องสี่เหลี่ยมขนาดเท่าความกว้างหน้าจอ (ไม่เกินพื้นที่)
+    final previewSize = screenWidth; // สี่เหลี่ยม 1:1
+
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              color: const Color.fromARGB(255, 204, 251, 212),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const PlantLibraryPage(userId: 'guest'),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'สารานุกรมพืชทั้งหมด',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 39, 115, 42),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
-                      hintText: 'ค้นหาพืชที่มีอยู่ในการประมวลผล',
-                      hintStyle: const TextStyle(
-                        color: Color.fromARGB(255, 107, 159, 108),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // พรีวิวกล้องเปิดทันทีเมื่อเข้าแอป
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: AspectRatio(
-                aspectRatio: 1, // ทำให้เป็นช่องสี่เหลี่ยมสวย ๆ
-                child: _controller == null
-                    ? const Center(child: Text('ไม่พบกล้อง'))
-                    : FutureBuilder<void>(
-                        future: _initCamFuture,
-                        builder: (_, snap) {
-                          if (snap.connectionState == ConnectionState.done) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: CameraPreview(_controller!),
-                            );
-                          }
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        },
-                      ),
-              ),
-            ),
-
-            // ปุ่มถ่าย/อัพโหลดไฟล์
-            Container(
-              color: const Color(0xFFE9F6EA),
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _capture,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: const BoxDecoration(
-                        color: Colors.redAccent,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'หรือ',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 39, 115, 42),
-                    ),
-                  ),
-                  const Text(
-                    'นำเข้ารูปภาพจากไฟล์',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 39, 115, 42),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 50),
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 107, 159, 108),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: const BorderSide(
-                            color: Color.fromARGB(255, 11, 105, 30)),
-                      ),
-                    ),
-                    child: const Text(
-                      'เลือกไฟล์',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 107, 159, 108),
-                      ),
-                    ),
-                    onPressed: () async {
-                      final imagePath = await Navigator.push<String>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UploadPhotoPage(),
-                        ),
-                      );
-                      if (!mounted) return;
-                      if (imagePath != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResultPage(
-                              userId: 'guest',
-                              // imagePath: imagePath,
+        // ทำให้ทั้งหมดเลื่อนขึ้นลงได้เมื่อความสูงเกินหน้าจอ
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                color: const Color.fromARGB(255, 204, 251, 212),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PlantLibraryPage(userId: 'guest'),
                             ),
+                          );
+                        },
+                        child: const Text(
+                          'สารานุกรมพืชทั้งหมด',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 39, 115, 42),
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: 'ค้นหาพืชที่มีอยู่ในการประมวลผล',
+                        hintStyle: const TextStyle(
+                          color: Color.fromARGB(255, 107, 159, 108),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // พรีวิวกล้อง (กำหนดขนาดแน่นอนเพื่อหลีกเลี่ยงปัญหา unbounded height)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: previewSize,
+                  height: previewSize,
+                  child: _controller == null
+                      ? const Center(child: Text('ไม่พบกล้อง'))
+                      : FutureBuilder<void>(
+                          future: _initCamFuture,
+                          builder: (_, snap) {
+                            if (snap.connectionState == ConnectionState.done) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: CameraPreview(_controller!),
+                              );
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                        ),
+                ),
+              ),
+
+              // ปุ่มถ่าย/อัพโหลดไฟล์
+              Container(
+                color: const Color(0xFFE9F6EA),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _capture,
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.camera_alt,
+                              color: Colors.white, size: 36),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'หรือ',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 39, 115, 42),
+                      ),
+                    ),
+                    const Text(
+                      'นำเข้ารูปภาพจากไฟล์',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 39, 115, 42),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 50),
+                        backgroundColor: Colors.white,
+                        foregroundColor:
+                            const Color.fromARGB(255, 107, 159, 108),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(
+                              color: Color.fromARGB(255, 11, 105, 30)),
+                        ),
+                      ),
+                      child: const Text(
+                        'เลือกไฟล์',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 107, 159, 108),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final imagePath = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UploadPhotoPage(),
                           ),
                         );
-                      }
-                    },
-                  ),
-                ],
+                        if (!mounted) return;
+                        if (imagePath != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResultPage(
+                                userId: 'guest',
+                                imagePath: imagePath,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // เพิ่ม padding ล่างเล็กน้อยเพื่อให้เลื่อนเห็นปุ่มสุดท้ายไม่ติดขอบ
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

@@ -44,3 +44,8 @@
     </queries>
     <uses-permission android:name="android.permission.CAMERA"/>
 </manifest>
+<uses-permission android:name="android.permission.INTERNET"/>
+<!-- ถ้าทดสอบ http ไม่ใช่ https ใน dev -->
+<application
+    android:usesCleartextTraffic="true">
+</application>
