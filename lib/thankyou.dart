@@ -1,52 +1,23 @@
+// lib/thankyou.dart
 import 'package:flutter/material.dart';
 import 'analysisresult.dart';
+import 'main.dart'; // Import main.dart เพื่อกลับไปหน้าแรก
 
 class ThankYouPage extends StatelessWidget {
-  final String userId; // ✅ เพิ่มตรงนี้
-  const ThankYouPage({super.key, this.userId = 'guest'});
+  final Map<String, dynamic> predictionResult;
+  const ThankYouPage({super.key, required this.predictionResult});
 
   @override
   Widget build(BuildContext context) {
+    final plantInfo = predictionResult['plant_info'];
+    final plantName = plantInfo['name'];
+    final classId = predictionResult['class_id'];
+
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.black87,
-      //   title: const Text('Take Picture4'),
-      // ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            color: const Color(0xFFDFF5DC),
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              children: const [
-                Text(
-                  'ผลการวิเคราะห์',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 39, 115, 42),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '"แมงลัก"',
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Image.asset(
-            'assets/images/manglug.jpg',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 260,
-          ),
-          const SizedBox(height: 16),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
@@ -60,88 +31,40 @@ class ThankYouPage extends StatelessWidget {
                 const Text(
                   'ขอบคุณสำหรับ\nความคิดเห็นของคุณ!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 39, 115, 42),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text.rich(
-                  TextSpan(
-                    text: 'โมเดลตัวนี้มีความแม่นยำเฉลี่ย ',
-                    style: TextStyle(
-                        fontSize: 16, color: Color.fromARGB(255, 39, 115, 42)),
-                    children: [
-                      TextSpan(
-                        text: '75%',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(
-                          text: ' โดยผ่านการประมวลผล\nมาจำนวน ',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 39, 115, 42))),
-                      TextSpan(
-                        text: '20 ครั้ง',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 39, 115, 42)),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // กลับไปหน้าเริ่มต้นถ่ายรูป
-                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MyHomePage(title: '')),
+                      (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFBBF7D0),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text(
-                    'ถ่ายรูปอีกครั้ง',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: const Text('ถ่ายรูปอีกครั้ง', style: TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold)),
                 ),
                 const Divider(height: 32),
                 ElevatedButton(
                   onPressed: () {
-                    // ไปหน้ารายละเอียดเพิ่มเติม
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              AnalysisResultPage(userId: userId)),
+                      MaterialPageRoute(builder: (context) => AnalysisResultPage(classId: classId)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   ),
-                  child: const Text(
-                    'รายละเอียดเพิ่มเติม',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color.fromARGB(255, 39, 115, 42),
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Text(
+                    'รายละเอียดเพิ่มเติมของ "$plantName"',
+                    style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 39, 115, 42), fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                   ),
                 ),
               ],

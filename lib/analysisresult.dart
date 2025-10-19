@@ -1,106 +1,140 @@
+// lib/analysisresult.dart
 import 'package:flutter/material.dart';
+import 'api_service.dart';
+import 'plant_model.dart';
 import 'suggestion.dart';
 
-class AnalysisResultPage extends StatelessWidget {
-  final String userId;
-  const AnalysisResultPage({super.key, required this.userId});
+class AnalysisResultPage extends StatefulWidget {
+  final int classId;
+  const AnalysisResultPage({super.key, required this.classId});
+
+  @override
+  State<AnalysisResultPage> createState() => _AnalysisResultPageState();
+}
+
+class _AnalysisResultPageState extends State<AnalysisResultPage> {
+  Future<Plant>? _plantFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _plantFuture = ApiService.getPlantDetails(widget.classId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // ปุ่ม back ด้านบนพื้นหลังสีเขียวอ่อน
-          Container(
-            width: double.infinity,
-            color: const Color(0xFFE9F6EA),
-            padding: const EdgeInsets.all(12),
-            alignment: Alignment.topLeft,
-            child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: const Icon(Icons.arrow_back,
-                  color: Color.fromARGB(255, 11, 105, 30), size: 48),
-            ),
-          ),
+      body: FutureBuilder<Plant>(
+        future: _plantFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('ไม่พบข้อมูลพืช'));
+          }
 
-          // ภาพพืช
-          Image.asset(
-            'assets/images/manglug.jpg', // แก้ path ตามที่ใช้จริง
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          final plant = snapshot.data!;
 
-          // เนื้อหา
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Center(
-                      child: Text(
-                        'จากการวิเคราะห์ของเรา',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text('พืชชนิดนี้ มีชื่อว่า แมงลัก\n'),
-                    Text('ชื่อสามัญ คือ ******\n'),
-                    Text('ชื่อวิทยาศาสตร์ คือ ***********************\n'),
-                    Text('อยู่ในวงศ์ ********\n'),
-                    Text(
-                        'ประโยชน์ทางยา คือ\n***********************************\n***********************************\n'),
-                    Text(
-                        'ประโยชน์ทางอาหาร คือ\n***********************************\n***********************************\n'),
-                    Text(
-                        'คุณค่าทางอาหาร คือ\n***********************************\n***********************************\n'),
-                  ],
-                ),
+          return Column(
+            children: [
+              _buildHeader(context),
+              Image.network(
+                plant.imageUrl,
+                width: double.infinity,
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 100),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                // ไปหน้าsuggestion
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SuggestionPage(
-                            userId: userId,
-                          )),
-                );
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                decoration: BoxDecoration(
+              Expanded(
+                child: Container(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color.fromARGB(255, 11, 105, 30)),
-                ),
-                child: Center(
-                  child: Text(
-                    'ส่งข้อเสนอแนะเพิ่มเติม',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color.fromARGB(255, 107, 159, 108),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(plant.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 16),
+                        _buildDetailRow('ชื่อสามัญ:', plant.commonName),
+                        _buildDetailRow('ชื่อวิทยาศาสตร์:', plant.scientificName),
+                        _buildDetailRow('วงศ์:', plant.family),
+                        _buildBenefitSection('ประโยชน์ทางยา:', plant.medicinalBenefits),
+                        _buildBenefitSection('ประโยชน์ทางอาหาร:', plant.nutritionalBenefits),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ),
-          )
+              _buildSuggestionButton(context),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFFE9F6EA),
+      padding: const EdgeInsets.only(top: 40, left: 12, bottom: 12),
+      alignment: Alignment.topLeft,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 11, 105, 30), size: 32),
+        onPressed: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String title, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text.rich(
+        TextSpan(
+          text: '$title ',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          children: [
+            TextSpan(text: value ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.normal)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBenefitSection(String title, String? content) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 4),
+          Text(content ?? 'ไม่มีข้อมูล'),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionButton(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionPage())),
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Color.fromARGB(255, 11, 105, 30)),
+          ),
+        ),
+        child: const Text('ส่งข้อเสนอแนะเพิ่มเติม', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 107, 159, 108))),
       ),
     );
   }
