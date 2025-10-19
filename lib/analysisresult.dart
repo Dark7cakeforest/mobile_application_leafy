@@ -6,7 +6,8 @@ import 'suggestion.dart';
 
 class AnalysisResultPage extends StatefulWidget {
   final int classId;
-  const AnalysisResultPage({super.key, required this.classId});
+  final int userId;
+  const AnalysisResultPage({super.key, required this.classId, required this.userId});
 
   @override
   State<AnalysisResultPage> createState() => _AnalysisResultPageState();
@@ -125,7 +126,7 @@ class _AnalysisResultPageState extends State<AnalysisResultPage> {
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionPage())),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SuggestionPage(userId: widget.userId))),
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
           backgroundColor: Colors.white,

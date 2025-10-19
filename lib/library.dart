@@ -96,7 +96,7 @@ class _PlantLibraryPageState extends State<PlantLibraryPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AnalysisResultPage(classId: plant.classId)),
+                    MaterialPageRoute(builder: (context) => AnalysisResultPage(classId: plant.classId,userId: 2,)),
                   );
                 },
                 child: Card(

@@ -41,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   CameraController? _controller;
-  Future<void>? _initCamFuture;
   bool _isProcessing = false;
 
   @override
@@ -59,7 +58,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<void> _onNewCameraSelected(CameraDescription description) async {
     final oldController = _controller;
     _controller = CameraController(description, ResolutionPreset.high, enableAudio: false);
-    _initCamFuture = _controller!.initialize();
+    // Await initialize here so analyzer knows the controller is initialized when used
+    try {
+      await _controller!.initialize();
+    } catch (e) {
+      debugPrint('Camera initialize error: $e');
+    }
     await oldController?.dispose();
     if (mounted) setState(() {});
   }

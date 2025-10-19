@@ -12,6 +12,7 @@ class ThankYouPage extends StatelessWidget {
     final plantInfo = predictionResult['plant_info'];
     final plantName = plantInfo['name'];
     final classId = predictionResult['class_id'];
+    final guestUserId = predictionResult['guest_user_id'];
 
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
@@ -54,7 +55,7 @@ class ThankYouPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AnalysisResultPage(classId: classId)),
+                      MaterialPageRoute(builder: (context) => AnalysisResultPage(classId: classId, userId: guestUserId,)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

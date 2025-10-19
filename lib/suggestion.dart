@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'api_service.dart';
 
 class SuggestionPage extends StatefulWidget {
-  const SuggestionPage({super.key});
+  final int userId;
+  const SuggestionPage({super.key, required this.userId});
 
   @override
   State<SuggestionPage> createState() => _SuggestionPageState();
@@ -20,7 +21,7 @@ class _SuggestionPageState extends State<SuggestionPage> {
     setState(() => _isSubmitting = true);
 
     try {
-      await ApiService.submitSuggestion(suggestion);
+      await ApiService.submitSuggestion(userId: widget.userId,message: suggestion);
       if (mounted) {
         showDialog(
           context: context,

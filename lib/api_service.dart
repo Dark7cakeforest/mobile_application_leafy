@@ -1,11 +1,13 @@
-// lib/api_service.dart
+// lib/api_service.dart (ฉบับสมบูรณ์)
+
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'plant_model.dart';
+import 'plant_model.dart'; // ตรวจสอบว่าคุณมีไฟล์ lib/models/plant_model.dart
 
 class ApiService {
-  static const String _baseUrl = "http://192.168.1.100:3001";
+
+  static const String _baseUrl = "http://192.168.1.33:3001";
   static const String _apiUrl = "$_baseUrl/api";
 
   // 1. ส่งรูปภาพไปประมวลผล
@@ -43,7 +45,7 @@ class ApiService {
     }
   }
 
-  // 3. ดึงข้อมูลรายละเอียดของพืช (ใช้ Plant model)
+  // 3. ดึงข้อมูลรายละเอียดของพืช
   static Future<Plant> getPlantDetails(int classId) async {
     try {
       final response = await http.get(Uri.parse('$_apiUrl/plant_details/$classId'));
@@ -63,7 +65,7 @@ class ApiService {
     }
   }
 
-  // 4. [ใหม่] ดึงข้อมูลพืชทั้งหมดสำหรับหน้า Library
+  // 4. ดึงข้อมูลพืชทั้งหมดสำหรับหน้า Library
   static Future<List<Plant>> getAllPlants() async {
     try {
       final response = await http.get(Uri.parse('$_apiUrl/read'));
@@ -79,17 +81,18 @@ class ApiService {
     }
   }
 
-  // 5. [ใหม่] ส่งข้อเสนอแนะ
-  static Future<void> submitSuggestion(String message) async {
-    // หมายเหตุ: Backend endpoint /api/suggestions ในไฟล์ database.js
-    // ที่ให้มาอาจจะต้องปรับแก้เพื่อรองรับ guest user
+  // 5. ส่งข้อเสนอแนะ
+  static Future<void> submitSuggestion({required int userId, required String message}) async {
     try {
        final response = await http.post(
-        Uri.parse('$_apiUrl/suggestions'), // Endpoint นี้อาจจะต้องสร้างใน backend
+        Uri.parse('$_apiUrl/suggestions'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'message': message}),
+        body: json.encode({
+          'userId': userId, 
+          'message': message,
+        }),
        );
-       if(response.statusCode != 200 && response.statusCode != 201) {
+       if(response.statusCode != 200) {
           throw Exception('Failed to submit suggestion: ${response.body}');
        }
     } catch (e) {
