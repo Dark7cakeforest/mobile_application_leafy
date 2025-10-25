@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -6,6 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'api_service.dart';
 import 'result.dart';
 import 'library.dart';
+
+// Set to false to disable CameraPreview (useful for running on emulators that
+// have rendering/camera issues). Set to true when testing on a real device.
+const bool kEnableCameraPreview = false;
 
 List<CameraDescription> _cameras = [];
 
@@ -47,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (_cameras.isNotEmpty) {
+    // Only initialize camera when preview is enabled to avoid emulator crashes
+    if (kEnableCameraPreview && _cameras.isNotEmpty) {
       _onNewCameraSelected(_cameras.firstWhere(
         (c) => c.lensDirection == CameraLensDirection.back,
         orElse: () => _cameras.first,
@@ -189,9 +193,37 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildCameraPreview() {
+    // If preview is disabled, show a safe placeholder so the app can run on
+    // emulators that otherwise crash with CameraPreview/native surface texture.
+    if (!kEnableCameraPreview) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.photo_camera_front, size: 64, color: Colors.grey),
+                    SizedBox(height: 8),
+                    Text('Camera preview disabled for emulator', textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     if (_controller == null || !_controller!.value.isInitialized) {
       return const Center(child: Text('กำลังเปิดกล้อง...'));
     }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: AspectRatio(

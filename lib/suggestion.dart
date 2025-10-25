@@ -1,4 +1,3 @@
-// lib/suggestion.dart
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 
@@ -21,29 +20,28 @@ class _SuggestionPageState extends State<SuggestionPage> {
     setState(() => _isSubmitting = true);
 
     try {
-      await ApiService.submitSuggestion(userId: widget.userId,message: suggestion);
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("ส่งสำเร็จ"),
-            content: const Text("ขอบคุณสำหรับข้อเสนอแนะของคุณ!"),
-            actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("ตกลง"))],
-          ),
-        ).then((_) => Navigator.of(context).pop()); // กลับไปหน้าก่อนหน้าหลังกดตกลง
-        _controller.clear();
-      }
+      await ApiService.submitSuggestion(userId: widget.userId, message: suggestion);
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("ส่งสำเร็จ"),
+          content: const Text("ขอบคุณสำหรับข้อเสนอแนะของคุณ!"),
+          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("ตกลง"))],
+        ),
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop(); // กลับไปหน้าก่อนหน้าหลังกดตกลง
     } catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("เกิดข้อผิดพลาด"),
-            content: Text("ไม่สามารถส่งข้อเสนอแนะได้\n$e"),
-            actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("ตกลง"))],
-          ),
-        );
-      }
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("เกิดข้อผิดพลาด"),
+          content: Text("ไม่สามารถส่งข้อเสนอแนะได้\n$e"),
+          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("ตกลง"))],
+        ),
+      );
     } finally {
        if (mounted) setState(() => _isSubmitting = false);
     }

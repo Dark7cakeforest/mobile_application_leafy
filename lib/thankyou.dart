@@ -1,7 +1,6 @@
-// lib/thankyou.dart
 import 'package:flutter/material.dart';
 import 'analysisresult.dart';
-import 'main.dart'; // Import main.dart เพื่อกลับไปหน้าแรก
+import 'main.dart';
 
 class ThankYouPage extends StatelessWidget {
   final Map<String, dynamic> predictionResult;

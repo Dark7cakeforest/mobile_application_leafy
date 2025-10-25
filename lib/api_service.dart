@@ -1,9 +1,7 @@
-// lib/api_service.dart (ฉบับสมบูรณ์)
-
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'plant_model.dart'; // ตรวจสอบว่าคุณมีไฟล์ lib/models/plant_model.dart
+import 'plant_model.dart';
 
 class ApiService {
 
@@ -46,9 +44,9 @@ class ApiService {
   }
 
   // 3. ดึงข้อมูลรายละเอียดของพืช
-  static Future<Plant> getPlantDetails(int classId) async {
+  static Future<Plant> getPlantDetails(int plantId) async {
     try {
-      final response = await http.get(Uri.parse('$_apiUrl/plant_details/$classId'));
+      final response = await http.get(Uri.parse('$_apiUrl/plant_details/$plantId'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
@@ -71,10 +69,26 @@ class ApiService {
       final response = await http.get(Uri.parse('$_apiUrl/read'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final List<dynamic> plantJson = data['plant'];
-        return plantJson.map((json) => Plant.fromJson(json, _baseUrl)).toList();
+        final List<dynamic>? plantJson = (data is Map && data['plant'] is List) ? List<dynamic>.from(data['plant']) : null;
+        if (plantJson == null) {
+          throw Exception('Unexpected API response shape: ${response.body}');
+        }
+
+        final List<Plant> plants = [];
+        for (final item in plantJson) {
+          try {
+            // attempt to parse and construct Plant; this may throw a FormatException
+            plants.add(Plant.fromJson(item as Map<String, dynamic>, _baseUrl));
+          } catch (e) {
+            // Log and skip malformed rows instead of crashing the whole fetch
+            // ignore: avoid_print
+            print('Skipping invalid plant entry: $e -- raw: $item');
+          }
+        }
+
+        return plants;
       } else {
-        throw Exception('Failed to load plants');
+        throw Exception('Failed to load plants: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       throw Exception('Error fetching all plants: $e');
