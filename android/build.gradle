@@ -3,6 +3,11 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.all {// Add this block
+        resolutionStrategy {
+            force "org.bouncycastle:bcprov-jdk18on:1.77"
+        }
+    }
 }
 
 rootProject.buildDir = "../build"

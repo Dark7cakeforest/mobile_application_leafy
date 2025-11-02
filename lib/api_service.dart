@@ -44,9 +44,9 @@ class ApiService {
   }
 
   // 3. ดึงข้อมูลรายละเอียดของพืช
-  static Future<Plant> getPlantDetails(int plantId) async {
+  static Future<Plant> getPlantDetails(int classId) async {
     try {
-      final response = await http.get(Uri.parse('$_apiUrl/plant_details/$plantId'));
+      final response = await http.get(Uri.parse('$_apiUrl/plant_details/$classId'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
@@ -54,6 +54,26 @@ class ApiService {
           return Plant.fromJson(data['details'], _baseUrl);
         } else {
           throw Exception('API returned an error: ${data['error']}');
+        }
+      } else {
+        throw Exception('Failed to load plant details: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching plant details: $e');
+    }
+  }
+
+  // 3b. ดึงข้อมูลรายละเอียดของพืชโดย plantId
+  static Future<Plant> getPlantDetailsById(int plantId) async {
+    try {
+      final response = await http.get(Uri.parse('$_apiUrl/read/$plantId'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['msg'] == 'Read successfully') {
+          // ใช้ baseUrl เพื่อสร้าง URL ของรูปภาพให้สมบูรณ์
+          return Plant.fromJson(data['plant'], _baseUrl);
+        } else {
+          throw Exception('API returned an error');
         }
       } else {
         throw Exception('Failed to load plant details: ${response.body}');

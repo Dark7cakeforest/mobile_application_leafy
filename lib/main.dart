@@ -6,9 +6,9 @@ import 'api_service.dart';
 import 'result.dart';
 import 'library.dart';
 
-// Set to false to disable CameraPreview (useful for running on emulators that
-// have rendering/camera issues). Set to true when testing on a real device.
-const bool kEnableCameraPreview = false;
+// Enable camera preview for both real devices and emulators
+// Camera will work on emulators if they have camera access configured
+const bool kEnableCameraPreview = true;
 
 List<CameraDescription> _cameras = [];
 
@@ -50,23 +50,35 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Only initialize camera when preview is enabled to avoid emulator crashes
-    if (kEnableCameraPreview && _cameras.isNotEmpty) {
-      _onNewCameraSelected(_cameras.firstWhere(
+    // Initialize camera for both real devices and emulators
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    if (!kEnableCameraPreview || _cameras.isEmpty) return;
+    try {
+      await _onNewCameraSelected(_cameras.firstWhere(
         (c) => c.lensDirection == CameraLensDirection.back,
         orElse: () => _cameras.first,
       ));
+    } catch (e) {
+      debugPrint('Camera initialization failed (may be emulator): $e');
+      // Camera will still work via image picker
     }
   }
 
   Future<void> _onNewCameraSelected(CameraDescription description) async {
     final oldController = _controller;
-    _controller = CameraController(description, ResolutionPreset.high, enableAudio: false);
+    _controller = CameraController(description, ResolutionPreset.medium, enableAudio: false);
     // Await initialize here so analyzer knows the controller is initialized when used
     try {
       await _controller!.initialize();
+      debugPrint('Camera initialized successfully');
     } catch (e) {
       debugPrint('Camera initialize error: $e');
+      // Dispose controller if initialization fails
+      await _controller?.dispose();
+      _controller = null;
     }
     await oldController?.dispose();
     if (mounted) setState(() {});
@@ -127,12 +139,38 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   Future<void> _capture() async {
     final cam = _controller;
-    if (cam == null || !cam.value.isInitialized) return;
+    if (cam == null || !cam.value.isInitialized) {
+      // If camera is not available, fall back to image picker
+      _pickFromCamera();
+      return;
+    }
     try {
       final xfile = await cam.takePicture();
       _processImage(File(xfile.path));
     } catch (e) {
       debugPrint('takePicture error: $e');
+      // Fall back to image picker if camera capture fails
+      _pickFromCamera();
+    }
+  }
+
+  Future<void> _pickFromCamera() async {
+    final picker = ImagePicker();
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      if (pickedFile != null) {
+        _processImage(File(pickedFile.path));
+      }
+    } catch (e) {
+      debugPrint('Image picker camera error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('ไม่สามารถเปิดกล้องได้ กรุณาใช้ปุ่มเลือกไฟล์แทน'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 
@@ -193,44 +231,48 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildCameraPreview() {
-    // If preview is disabled, show a safe placeholder so the app can run on
-    // emulators that otherwise crash with CameraPreview/native surface texture.
-    if (!kEnableCameraPreview) {
+    // Show camera preview if enabled and initialized
+    if (kEnableCameraPreview && _controller != null && _controller!.value.isInitialized) {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: AspectRatio(
-          aspectRatio: 1,
+          aspectRatio: _controller!.value.aspectRatio,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Container(
-              color: Colors.white,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.photo_camera_front, size: 64, color: Colors.grey),
-                    SizedBox(height: 8),
-                    Text('Camera preview disabled for emulator', textAlign: TextAlign.center),
-                  ],
-                ),
-              ),
-            ),
+            child: CameraPreview(_controller!),
           ),
         ),
       );
     }
 
-    if (_controller == null || !_controller!.value.isInitialized) {
-      return const Center(child: Text('กำลังเปิดกล้อง...'));
-    }
-
+    // Show placeholder if camera is not available or not initialized
     return Padding(
       padding: const EdgeInsets.all(16),
       child: AspectRatio(
         aspectRatio: 1,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: CameraPreview(_controller!),
+          child: Container(
+            color: Colors.white,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.photo_camera_front, size: 64, color: Colors.grey),
+                  const SizedBox(height: 8),
+                  Text(
+                    kEnableCameraPreview && _cameras.isEmpty
+                        ? 'ไม่พบกล้อง\nกรุณาใช้ปุ่มเลือกไฟล์'
+                        : kEnableCameraPreview
+                            ? 'กำลังเปิดกล้อง...'
+                            : 'Camera preview disabled',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
