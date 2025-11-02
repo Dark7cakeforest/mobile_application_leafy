@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'plant_model.dart';
@@ -84,7 +86,59 @@ class _AnalysisResultPageState extends State<AnalysisResultPage> {
                       ],
                     ),
                   ),
-                ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text('ชื่อสามัญ: $nameEn'),
+              const SizedBox(height: 8),
+              Text('ชื่อวิทยาศาสตร์: $sci'),
+              const SizedBox(height: 8),
+              Text('อยู่ในวงศ์: $family'),
+              const SizedBox(height: 16),
+              const Text('ประโยชน์ทางยา',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(medicinal),
+              const SizedBox(height: 12),
+              const Text('ประโยชน์ทางอาหาร',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(culinary),
+              const SizedBox(height: 12),
+              const Text('คุณค่าทางอาหาร',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(nutrition),
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuggestionPage(userId: widget.userId),
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Color.fromARGB(255, 11, 105, 30)),
+          ),
+          child: const Center(
+            child: Text(
+              'ส่งข้อเสนอแนะเพิ่มเติม',
+              style: TextStyle(
+                fontSize: 18,
+                color: Color.fromARGB(255, 107, 159, 108),
               ),
               if (widget.showSuggestionButton) _buildSuggestionButton(context),
             ],

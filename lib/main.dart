@@ -184,6 +184,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // ตั้งให้ preview เป็นช่องสี่เหลี่ยมขนาดเท่าความกว้างหน้าจอ (ไม่เกินพื้นที่)
+    final previewSize = screenWidth; // สี่เหลี่ยม 1:1
+
     return Scaffold(
       backgroundColor: const Color(0xFFE9F6EA),
       body: SafeArea(

@@ -1,3 +1,6 @@
+// plant_library_page.dart
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'plant_model.dart';
@@ -35,6 +38,59 @@ class _PlantLibraryPageState extends State<PlantLibraryPage> {
       _filteredPlants = _allPlants.where((plant) {
         return plant.name.toLowerCase().contains(query);
       }).toList();
+    });
+  }
+
+  @override
+  State<PlantLibraryPage> createState() => _PlantLibraryPageState();
+}
+
+class _PlantLibraryPageState extends State<PlantLibraryPage> {
+  late Future<List<Plant>> _future;
+  List<Plant> _all = [];
+  List<Plant> _filtered = [];
+  final TextEditingController _searchCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _load();
+    _searchCtrl.addListener(_applyFilter);
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.removeListener(_applyFilter);
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<List<Plant>> _load() async {
+    final items = await fetchPlants();
+    _all = items;
+    _filtered = items;
+    return items;
+  }
+
+  void _applyFilter() {
+    final q = _searchCtrl.text.trim().toLowerCase();
+    if (q.isEmpty) {
+      setState(() => _filtered = _all);
+      return;
+    }
+    setState(() {
+      _filtered = _all.where((p) {
+        return p.nameTh.toLowerCase().contains(q) ||
+            p.nameEn.toLowerCase().contains(q);
+      }).toList();
+    });
+  }
+
+  Future<void> _refresh() async {
+    final items = await _load();
+    setState(() {
+      _all = items;
+      _applyFilter();
     });
   }
 

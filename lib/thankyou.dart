@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'analysisresult.dart';
 import 'main.dart';
@@ -18,6 +19,7 @@ class ThankYouPage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Header
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
@@ -33,7 +35,10 @@ class ThankYouPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 39, 115, 42)),
                 ),
+
                 const SizedBox(height: 20),
+
+                // กลับไปเริ่มต้น
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
@@ -49,7 +54,10 @@ class ThankYouPage extends StatelessWidget {
                   ),
                   child: const Text('ถ่ายรูปอีกครั้ง', style: TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold)),
                 ),
+
                 const Divider(height: 32),
+
+                // ไปหน้ารายละเอียดเพิ่มเติม (ส่งข้อมูลต่อให้ครบ)
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(

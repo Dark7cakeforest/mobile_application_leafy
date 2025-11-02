@@ -85,7 +85,24 @@ class ResultPage extends StatelessWidget {
                       onPressed: () => _sendFeedbackAndNavigate(context, false),
                       icon: const Icon(Icons.cancel, color: Colors.red),
                     ),
-                  ],
+                  );
+                },
+                icon: const Icon(Icons.cancel, color: Colors.red),
+              ),
+            ],
+          ),
+
+          // แสดง top-k (ถ้ามี)
+          if (_topK.isNotEmpty) ...[
+            const Divider(height: 32),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'ตัวเลือกใกล้เคียง:',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 39, 115, 42),
+                  fontWeight: FontWeight.bold,
                 ),
               ],
             ),
