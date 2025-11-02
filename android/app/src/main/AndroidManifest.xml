@@ -42,7 +42,10 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
 </manifest>
 <uses-permission android:name="android.permission.INTERNET"/>
 <!-- ถ้าทดสอบ http ไม่ใช่ https ใน dev -->

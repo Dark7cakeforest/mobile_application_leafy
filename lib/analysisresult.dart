@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'api_service.dart';
+import 'plant_model.dart';
 import 'suggestion.dart';
 
 class AnalysisResultPage extends StatefulWidget {
-  final String userId;
-  final String? imagePath; // รูปจากหน้าก่อน (ถ่าย/อัปโหลด)
-  final String? predictedLabel; // label จาก AI
-  final double? confidence; // ความมั่นใจ (0..1)
-
+  final int? classId;
+  final int? plantId;
+  final int userId;
+  final bool showSuggestionButton;
   const AnalysisResultPage({
-    super.key,
+    super.key, 
+    this.classId, 
+    this.plantId,
     required this.userId,
-    this.imagePath,
-    this.predictedLabel,
-    this.confidence,
+    this.showSuggestionButton = true,
   });
 
   @override
@@ -23,197 +23,67 @@ class AnalysisResultPage extends StatefulWidget {
 }
 
 class _AnalysisResultPageState extends State<AnalysisResultPage> {
-  // === ตั้งค่า API ของฝั่งข้อมูลพืช ===
-  // ตัวอย่าง: GET /api/plant?label=แมงลัก
-  static const String _apiBase = 'http://localhost:5001';
-  static const String _endpoint = '/api/plant';
-
-  bool _loading = true;
-  String? _error;
-  Map<String, dynamic>? _plant; // เก็บรายละเอียดพืชจาก API
+  Future<Plant>? _plantFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadPlantDetail();
-  }
-
-  Future<void> _loadPlantDetail() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-
-    try {
-      // ถ้าไม่มี predictedLabel ให้หยุดและแสดงข้อความ
-      final label = widget.predictedLabel;
-      if (label == null || label.trim().isEmpty) {
-        throw Exception(
-            'ไม่มีชื่อพืชจากผลวิเคราะห์ (predictedLabel) สำหรับดึงข้อมูลรายละเอียด');
-      }
-
-      final uri = Uri.parse('$_apiBase$_endpoint').replace(queryParameters: {
-        'label': label,
-      });
-
-      final resp = await http.get(uri).timeout(const Duration(seconds: 20));
-
-      if (resp.statusCode != 200) {
-        throw Exception(
-            'โหลดข้อมูลพืชไม่สำเร็จ: ${resp.statusCode} ${resp.body}');
-      }
-
-      final data = jsonDecode(resp.body);
-      // ====== ตัวอย่าง JSON ที่คาดหวังจากแบ็กเอนด์ ======
-      // {
-      //   "name_th": "แมงลัก",
-      //   "name_en": "Hoary basil",
-      //   "sci_name": "Ocimum × africanum",
-      //   "family": "Lamiaceae",
-      //   "medicinal": "ข้อความ…",
-      //   "culinary": "ข้อความ…",
-      //   "nutrition": "ข้อความ…",
-      //   "image_url": "http://.../manglak.jpg"   // (ถ้าอยากใช้รูปจากเซิร์ฟเวอร์)
-      // }
-
-      if (data == null || data is! Map) {
-        throw Exception('รูปแบบข้อมูลไม่ถูกต้อง');
-      }
-
-      setState(() {
-        _plant = Map<String, dynamic>.from(data);
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _loading = false;
-      });
+    // Fetch by classId if available, otherwise by plantId
+    if (widget.classId != null) {
+      _plantFuture = ApiService.getPlantDetails(widget.classId!);
+    } else if (widget.plantId != null) {
+      _plantFuture = ApiService.getPlantDetailsById(widget.plantId!);
+    } else {
+      throw Exception('Either classId or plantId must be provided');
     }
   }
 
-  Widget _buildTopBar(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: const Color(0xFFE9F6EA),
-      padding: const EdgeInsets.all(12),
-      alignment: Alignment.topLeft,
-      child: InkWell(
-        onTap: () => Navigator.pop(context),
-        child: const Icon(
-          Icons.arrow_back,
-          color: Color.fromARGB(255, 11, 105, 30),
-          size: 48,
-        ),
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FutureBuilder<Plant>(
+        future: _plantFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('ไม่พบข้อมูลพืช'));
+          }
 
-  Widget _buildImage() {
-    // ถ้ามี imagePath จากผู้ใช้ ให้แสดงรูปนั้นก่อน
-    if (widget.imagePath != null && widget.imagePath!.isNotEmpty) {
-      final f = File(widget.imagePath!);
-      return Image.file(
-        f,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _fallbackImage(),
-      );
-    }
+          final plant = snapshot.data!;
 
-    // ถ้าอยากใช้รูปจากแบ็กเอนด์ (image_url) ให้เปิดคอมเมนต์นี้
-    // if (_plant?['image_url'] != null) {
-    //   return Image.network(
-    //     _plant!['image_url'],
-    //     width: double.infinity,
-    //     fit: BoxFit.cover,
-    //     errorBuilder: (_, __, ___) => _fallbackImage(),
-    //   );
-    // }
-
-    // ถ้าไม่มีก็ใช้ asset เดิมเป็น fallback
-    return _fallbackImage();
-  }
-
-  Widget _fallbackImage() {
-    return Image.asset(
-      'assets/images/manglug.jpg', // แก้ path ตามโปรเจกต์จริงของคุณ
-      width: double.infinity,
-      fit: BoxFit.cover,
-    );
-  }
-
-  Widget _buildBody() {
-    if (_loading) {
-      return const Expanded(
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_error != null) {
-      return Expanded(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              child: Text(
-                'เกิดข้อผิดพลาดในการโหลดข้อมูลพืช:\n$_error',
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _loadPlantDetail,
-              child: const Text('ลองใหม่'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final nameTh =
-        (_plant?['name_th'] ?? widget.predictedLabel ?? '-').toString();
-    final nameEn = (_plant?['name_en'] ?? '—').toString();
-    final sci = (_plant?['sci_name'] ?? '—').toString();
-    final family = (_plant?['family'] ?? '—').toString();
-    final medicinal = (_plant?['medicinal'] ?? '—').toString();
-    final culinary = (_plant?['culinary'] ?? '—').toString();
-    final nutrition = (_plant?['nutrition'] ?? '—').toString();
-
-    final confText = widget.confidence != null
-        ? ' (${(widget.confidence! * 100).toStringAsFixed(1)}%)'
-        : '';
-
-    return Expanded(
-      child: Container(
-        color: Colors.white,
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          return Column(
             children: [
-              Center(
-                child: Text(
-                  'จากการวิเคราะห์ของเรา',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+              _buildHeader(context),
+              Image.network(
+                plant.imageUrl,
+                width: double.infinity,
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 100),
               ),
-              const SizedBox(height: 12),
-              // ชื่อพืช (ไทย) + ความมั่นใจ (ถ้ามี)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text('พืชชนิดนี้ มีชื่อว่า: ',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Flexible(
-                    child: Text(
-                      nameTh + confText,
-                      style: const TextStyle(fontSize: 16),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(plant.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 16),
+                        _buildDetailRow('ชื่อสามัญ:', plant.commonName),
+                        _buildDetailRow('ชื่อวิทยาศาสตร์:', plant.scientificName),
+                        _buildDetailRow('วงศ์:', plant.family),
+                        _buildBenefitSection('ประโยชน์ทางยา:', plant.medicinalBenefits),
+                        _buildBenefitSection('ประโยชน์ทางอาหาร:', plant.nutritionalBenefits),
+                        _buildNutritionalSection('ตารางคุณค่าทางโภชนาการของพืช ต่อ 100 กรัม', plant.nutritionalValues),
+                      ],
                     ),
                   ),
                 ],
@@ -270,24 +140,190 @@ class _AnalysisResultPageState extends State<AnalysisResultPage> {
                 fontSize: 18,
                 color: Color.fromARGB(255, 107, 159, 108),
               ),
-            ),
-          ),
+              if (widget.showSuggestionButton) _buildSuggestionButton(context),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFFE9F6EA),
+      padding: const EdgeInsets.only(top: 40, left: 12, bottom: 12),
+      alignment: Alignment.topLeft,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 11, 105, 30), size: 32),
+        onPressed: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String title, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text.rich(
+        TextSpan(
+          text: '$title ',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          children: [
+            TextSpan(text: value ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.normal)),
+          ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // โครงสร้างตามของเดิม แต่เป็นไดนามิก + โหลดข้อมูล
-    return Scaffold(
-      body: Column(
+  Widget _buildBenefitSection(String title, String? content) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTopBar(context),
-          _buildImage(),
-          _buildBody(),
-          _buildSuggestButton(context),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 4),
+          Text(content ?? 'ไม่มีข้อมูล'),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNutritionalSection(String title, List<dynamic>? content) {
+    // 1. ตรวจสอบว่ามีข้อมูลหรือไม่
+    if (content == null || content.isEmpty) {
+      return _buildBenefitSection(title, 'ไม่มีข้อมูล');
+    }
+
+    // 2. แปลง List<dynamic> เป็น List<Map<String, dynamic>>
+    //    (ข้อมูลข้างในจะเป็น Map)
+    List<Map<String, dynamic>> dataList;
+    try {
+      dataList = content.cast<Map<String, dynamic>>();
+    } catch (e) {
+      return _buildBenefitSection(title, 'ข้อมูลมีรูปแบบไม่ถูกต้อง');
+    }
+
+    // 3. ค้นหา "Key" (Column) ทั้งหมดที่มีในข้อมูล
+    //    ใช้ Set เพื่อป้องกัน Key ซ้ำ
+    final allKeys = <String>{};
+    for (final map in dataList) {
+      allKeys.addAll(map.keys);
+    }
+    
+    // 4. เรียงลำดับ Key โดยให้ 'name' อยู่แรกสุด, 'unit' อยู่ท้ายสุด
+    //    และ 'amount' หรือ key อื่นๆ เช่น 'red', 'green' อยู่ตรงกลาง
+    final orderedKeys = allKeys.toList();
+    
+    orderedKeys.sort((a, b) {
+      // 'name' ต้องอยู่แรกสุดเสมอ
+      if (a == 'name' && b != 'name') return -1;
+      if (a != 'name' && b == 'name') return 1;
+      if (a == 'name' && b == 'name') return 0;
+      
+      // 'unit' ต้องอยู่ท้ายสุดเสมอ
+      if (a == 'unit' && b != 'unit') return 1;
+      if (a != 'unit' && b == 'unit') return -1;
+      if (a == 'unit' && b == 'unit') return 0;
+      
+      // ที่เหลือ (amount, red, green, etc.) เรียงตามตัวอักษร
+      // อยู่ระหว่าง name กับ unit
+      return a.compareTo(b);
+    });
+
+    // 5. สร้าง Header Row (แถวหัวข้อ) - แสดงเป็นภาษาไทยถ้าทำได้
+    final headerCells = orderedKeys.map((key) {
+      String displayKey = key;
+      // แปลง key เป็นภาษาไทยถ้าเป็น key มาตรฐาน
+      switch (key) {
+        case 'name':
+          displayKey = 'รายการ';
+          break;
+        case 'unit':
+          displayKey = 'หน่วย';
+          break;
+        case 'amount':
+          displayKey = 'ปริมาณ';
+          break;
+      }
+      
+      return TableCell(
+        child: Container(
+          color: const Color(0xFFE9F6EA),
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            displayKey,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }).toList();
+
+    // 6. สร้าง Data Rows (แถวข้อมูล)
+    final dataRows = dataList.map((map) {
+      // วน Loop ตามลำดับของ orderedKeys เพื่อให้ข้อมูลตรง Column
+      final cells = orderedKeys.map((key) {
+        // ดึงค่าจาก map, ถ้า key ไม่มีใน map นี้ ให้ใช้ 'N/A'
+        final value = map[key]?.toString() ?? 'N/A';
+        return TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              value,
+              textAlign: (map[key] is num) ? TextAlign.right : TextAlign.left,
+            ),
+          ),
+        );
+      }).toList();
+      
+      return TableRow(children: cells);
+    }).toList();
+
+    // 7. ประกอบร่าง Title และ Table
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // แสดง Title (หัวข้อ) ก่อน
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 8),
+          // สร้างตาราง
+          Table(
+            border: TableBorder.all(color: Colors.grey),
+            // กำหนดความกว้างของ Column อัตโนมัติ
+            columnWidths: {
+              for (int i=0; i<orderedKeys.length; i++)
+                i: const IntrinsicColumnWidth(), // ให้คำนวณความกว้างที่เหมาะสม
+            },
+            children: [
+              TableRow(children: headerCells), // แถว Header
+              ...dataRows, // แถวข้อมูลทั้งหมด
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionButton(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SuggestionPage(userId: widget.userId))),
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Color.fromARGB(255, 11, 105, 30)),
+          ),
+        ),
+        child: const Text('ส่งข้อเสนอแนะเพิ่มเติม', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 107, 159, 108))),
       ),
     );
   }
